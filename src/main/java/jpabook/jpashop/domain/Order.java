@@ -17,25 +17,50 @@ public class Order {
     @Column(name="order_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "order", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    /* cascade : order와 orderItem 각자 저장해줘야 하는데
+     persist(oderItemA) persist(oderItemB) persist(oderItemC) persist(order)
+     이런식으로 엔티티 당 하나씩 persist 호출해야 하는데 cascade두면 persist(order)만 해주고 아이템 각각 하나씩은 안해줘도됨.
+     */
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
+
+    // 이 경우도 cascade 없으면 persist(order), persist(delivery)도 각각 해줘야 함.
 
     private LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문상태. [order, cancel]
 
+    // 연관관계 편입 메서드. 양방향일 때 쓰면 좋음. 양쪽에서 세팅해줘야 하는 걸 한 코드로 연결.
     public void setMember(Member member) {
         this.member = member;
         member.getOrders().add(this);
+    }
+//    public static void main(String[] args){
+//        Member member = new Member();
+//        Order order = new Order();
+
+//        member.getOrders().add(order);
+//        order.setMember(member);
+//    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    public void setDelivery(Delivery delivery){
+        this.delivery = delivery;
+        delivery.setOrder(this);
     }
 }
 
