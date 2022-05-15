@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,8 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name="orders")
-@Getter
-@Setter
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 직접 생성하면 안되고 메서드를 이용하겠구나! 하고 알 수 있음.
 public class Order {
 
     @Id @GeneratedValue
@@ -64,7 +66,7 @@ public class Order {
     }
     // 생성메서드
     // 핵심 비지니스 로직 구현하기. 여러개의 연관관계 들어가야 하니까 별도의 생성메서드가 있으면 좋음.
-    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems){
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
         order.setMember(member);
         order.setDelivery(delivery);
