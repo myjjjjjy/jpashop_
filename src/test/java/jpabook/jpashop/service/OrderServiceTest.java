@@ -86,6 +86,7 @@ public class OrderServiceTest {
 
     }
 
+    // item쪽에 Setter이노테니션이 뭔가 적용이 안되는 것 같다. 다시 확인해보기!
     private Book createBook(String name, int price, int stockQuantity) {
         Book book = new Book();
         book.setName(name);
