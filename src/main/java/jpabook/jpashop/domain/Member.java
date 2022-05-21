@@ -24,4 +24,5 @@ public class Member {
     @OneToMany(mappedBy = "member") // 오더테이블에 있는 멤버필드에 의해 맵필될거야! 읽기 전용이 됨. 값을 여기에 넣어도 fk변경 안됨!
     private List<Order> orders = new ArrayList<>();
 
+
 }
