@@ -22,4 +22,6 @@ public class Delivery {
     @Enumerated(EnumType.STRING) // ORDINAL 넣으면 중간에 상태 추가되면 망함 꼭 STRING으로!
     private DeliveryStatus status; //READY, COMP
 
+//    public void setAddress(org.apache.tomcat.jni.Address address) {
+//    }
 }
