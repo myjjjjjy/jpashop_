@@ -64,7 +64,7 @@ public class OrderRepository {
     }
 
     // JPA Criteria
-  /*  public List<Order> findAllByCriteria(OrderSearch orderSearch){
+     public List<Order> findAllByCriteria(OrderSearch orderSearch){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Order> cq = cb.createQuery(Order.class);
         Root<Order> o = cq.from(Order.class);
@@ -86,7 +86,7 @@ public class OrderRepository {
         cq.where((cb.and(criteria.toArray(new Predicate[findAllByCriteria().size()]))));
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000);
         return query.getResultList();
-    }*/
+    }
 
     // public List<Order> findAll(OrderSearch orderSearch){}
 }
