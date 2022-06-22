@@ -15,7 +15,7 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
-    @PostMapping("/api/v1/members")
+    @PostMapping("/api/v1/memberZ")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member){
         // 회원등록 api 만들어보자
         Long id = memberService.join(member);
@@ -23,8 +23,7 @@ public class MemberApiController {
 
         // 엔티티 = api가 매핑되어 있는데 아주 위험!!! 엔티티를 외부에 노출 하는 것도 위험!! api를 위한 dto를 따로 파라미터값으로 받아야함
     }
-
-    @PostMapping("/api/v2/members")
+    @PostMapping("/api/v2/memberZ")
     public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request){
 
         Member member = new Member();
