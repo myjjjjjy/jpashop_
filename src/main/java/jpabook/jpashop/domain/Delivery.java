@@ -1,9 +1,12 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter @Setter
@@ -13,15 +16,13 @@ public class Delivery {
     @Column(name = "delivery_id")
     private Long id;
 
-    @OneToOne(mappedBy = "delivery",fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToOne(mappedBy = "delivery", fetch = LAZY)
     private Order order;
 
     @Embedded
     private Address address;
 
-    @Enumerated(EnumType.STRING) // ORDINAL 넣으면 중간에 상태 추가되면 망함 꼭 STRING으로!
+    @Enumerated(EnumType.STRING)
     private DeliveryStatus status; //READY, COMP
-
-//    public void setAddress(org.apache.tomcat.jni.Address address) {
-//    }
 }

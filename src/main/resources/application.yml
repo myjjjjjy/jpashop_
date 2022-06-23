@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
       <!-- 조회하니까 테이블 수정 할 일이 없어서 일단 none 세팅 => 테이블 드랍하지 않음 -->
     properties:
       hibernate:
