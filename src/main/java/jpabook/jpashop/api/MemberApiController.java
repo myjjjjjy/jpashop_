@@ -3,9 +3,13 @@ package jpabook.jpashop.api;
 import jpabook.jpashop.controller.Valid;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.service.MemberService;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +49,42 @@ public class MemberApiController {
 
     }
 
+    // 조회
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1(){
+        return memberService.findMembers();
+        // 이 방법으로 하면 안됨!
+        // 엔티티 직접 노출하게 되면 회원 정보 뿐만 아니라 모든 정보들이 외부에 노출됨 => @JsonIgnore
+        // 하지만, 다른 api를 만들게 되면 엔티티 안에 @JsonIgnore로 모두 해결할 수 없음..  의존관계 깨지고 수정하기 어려워짐
+        // => api 응답 스펙에 맞춰서 별도의 dto 반환해야함
+    }
+
+    @GetMapping("api/v2/members")
+    public Result memberV2(){
+        List<Member> findMembers = memberService.findMembers();
+        // memberDto로 변환해야함
+        List<MemberDto> collect = findMembers.stream().map(
+                m->new MemberDto(m.getName())).collect(Collectors.toList());
+        // 필요한 것만 노출하는 게 좋음!!
+        return new Result(collect);
+    }
+
     // 안에서만 쓸거니까 여기에 만들기
+    // 등록
+    @Data
+    static class CreateMemberRequest{
+        private String name;
+    }
+    @Data
+    static class CreateMemberResponse{
+        private Long id;
+
+        public CreateMemberResponse(Long id) {
+            this.id = id;
+        }
+    }
+
+    // 수정
     @Data
     static class UpdateMemberResponse{
         private Long id;
@@ -57,19 +96,17 @@ public class MemberApiController {
 
     }
 
-
+    // 조회
     @Data
-    static class CreateMemberRequest{
-        private String name;
+    @AllArgsConstructor
+    static class Result<T>{
+        private T data;
     }
-
     @Data
-    static class CreateMemberResponse{
-        private Long id;
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
 
-        public CreateMemberResponse(Long id) {
-            this.id = id;
-        }
     }
 
 }
