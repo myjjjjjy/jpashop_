@@ -36,15 +36,29 @@ public class OrderApiController {
         return all;
     }
 
+    // dto로 변환
     @GetMapping("api/v2/orders")
     public List<OrderDto> ordersV2(){
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
-        List<OrderDto> collect = orders.stream().map(o->new OrderDto(o)).collect(Collectors.toList());
+        List<OrderDto> result = orders.stream().map(o->new OrderDto(o)).collect(Collectors.toList());
 
-        return collect;
+        return result;
     }
 
-    // dto로 변환
+    // dto변환 - fetch조인 최적화
+    // 쿼리가 한 번만 나감. but, 페이징 불가. (꼭 기억하기!) 일대다를 페치조인 하는 순간 페이징 쿼리가 아예 안나감
+    @GetMapping("api/v3/orders")
+    public List<OrderDto> ordersV3(){
+        List<Order> orders = orderRepository.findAllWithItem();
+
+        for (Order order : orders){
+            System.out.println("order ref = " + order + " id = " + order.getId());
+        }
+        List<OrderDto> result = orders.stream().map(o->new OrderDto(o)).collect(Collectors.toList());
+
+        return result;
+    }
+
     @Getter
     static class OrderDto{
         private Long orderId;

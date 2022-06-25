@@ -96,4 +96,16 @@ public class OrderRepository {
                 .getResultList();
     }
 
+    public List<Order> findAllWithItem(){
+        return em.createQuery(
+                "select distinct o from Order o" + // distinct 증복제거 + 아이디 값이 같으면 중복이라고 판단, 하나만 반환함.
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch  oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100)
+                .getResultList();
+
+    }
 }
