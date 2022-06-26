@@ -59,6 +59,9 @@ public class OrderApiController {
         return result;
     }
 
+    @GetMapping("api/v4/orders")
+    public List<Order> orders = orderRepository.findAllWithItem();
+
     @Getter
     static class OrderDto{
         private Long orderId;
