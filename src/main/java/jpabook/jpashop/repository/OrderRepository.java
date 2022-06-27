@@ -106,6 +106,19 @@ public class OrderRepository {
                 .setFirstResult(1)
                 .setMaxResults(100)
                 .getResultList();
+        // 오더-멤버 걸어서 투원걸고 한 방 쿼리로 만들기
+        // orderItems는 투원관계가 아니니까 손 대지 않고
+        //
+    }
 
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
     }
 }
+

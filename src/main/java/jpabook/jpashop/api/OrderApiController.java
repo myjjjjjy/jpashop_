@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -24,23 +25,23 @@ public class OrderApiController {
 
     // 엔티티 직접 노출
     @GetMapping("/api/v1/orders")
-    public List<Order> ordersV1(){
+    public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
-        for (Order order : all){
+        for (Order order : all) {
             order.getMember().getName();
             order.getDelivery().getAddress();
 
             List<OrderItem> orderItems = order.getOrderItems();
-            orderItems.stream().forEach(o->o.getItem().getName());
+            orderItems.stream().forEach(o -> o.getItem().getName());
         }
         return all;
     }
 
     // dto로 변환
     @GetMapping("api/v2/orders")
-    public List<OrderDto> ordersV2(){
+    public List<OrderDto> ordersV2() {
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
-        List<OrderDto> result = orders.stream().map(o->new OrderDto(o)).collect(Collectors.toList());
+        List<OrderDto> result = orders.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
 
         return result;
     }
@@ -48,19 +49,28 @@ public class OrderApiController {
     // dto변환 - fetch조인 최적화
     // 쿼리가 한 번만 나감. but, 페이징 불가. (꼭 기억하기!) 일대다를 페치조인 하는 순간 페이징 쿼리가 아예 안나감
     @GetMapping("api/v3/orders")
-    public List<OrderDto> ordersV3(){
+    public List<OrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem();
 
-        for (Order order : orders){
+        for (Order order : orders) {
             System.out.println("order ref = " + order + " id = " + order.getId());
         }
-        List<OrderDto> result = orders.stream().map(o->new OrderDto(o)).collect(Collectors.toList());
+        List<OrderDto> result = orders.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
 
         return result;
     }
 
-    @GetMapping("api/v4/orders")
-    public List<Order> orders = orderRepository.findAllWithItem();
+    @GetMapping("api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "100") int limit)
+    {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+
+        List<OrderDto> result = orders.stream().map(o->new OrderDto(o)).collect(Collectors.toList());
+        return result;
+    }
+
 
     @Getter
     static class OrderDto{

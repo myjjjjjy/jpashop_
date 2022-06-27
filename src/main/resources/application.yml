@@ -12,7 +12,8 @@ spring:
     properties:
       hibernate:
         # show_sql: true //system.out.print()로 출력
-          format_sql:
+          format_sql:true
+          default_batch_fetch_size: 100 # 데이터 다 로딩 되도록 세팅.
 
 logging:
   level:
