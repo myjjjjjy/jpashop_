@@ -8,6 +8,7 @@ import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,8 +80,7 @@ public class OrderApiController {
         // 아래꺼랑 같아도 분리하는 게 좋음
     }
 
-
-    @Getter
+    @Data
     static class OrderDto{
         private Long orderId;
         private String name;
@@ -101,7 +101,7 @@ public class OrderApiController {
     }
 
     // 원하는 데이터만 가져올 수 있는 방법
-    @Getter
+    @Data
     static class OrderItemDto {
         private String itemName;
         private int orderPrice;
