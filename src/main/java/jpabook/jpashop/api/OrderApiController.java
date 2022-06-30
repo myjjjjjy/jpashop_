@@ -79,8 +79,12 @@ public class OrderApiController {
         return orderQueryRepository.findOrderQueryDtos();
         // 아래꺼랑 같아도 분리하는 게 좋음
     }
+    @GetMapping("api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
+    }
 
-    @Data
+    @Getter
     static class OrderDto{
         private Long orderId;
         private String name;
@@ -101,7 +105,7 @@ public class OrderApiController {
     }
 
     // 원하는 데이터만 가져올 수 있는 방법
-    @Data
+    @Getter
     static class OrderItemDto {
         private String itemName;
         private int orderPrice;

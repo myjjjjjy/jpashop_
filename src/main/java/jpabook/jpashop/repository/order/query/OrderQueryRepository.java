@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,6 +25,39 @@ public class OrderQueryRepository {
         return result;
     }
 
+    public List<OrderQueryDto> findAllByDto_optimization(){
+        List<OrderQueryDto> result = findOrders();
+
+        List<Long> orderIds = toOrderIds(result);
+
+        // 한번에 가져오기
+        // 패치조인보다 데이터 셀렉트하는 양이 적게 나옴
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = findOrderItemMap(orderIds);
+        // Map<Long, List<OrderItemQueryDto>> orderItemMap = findOrderItemMap(toOrderIds(result));
+
+        result.forEach(o->o.setOrderItems(orderItemMap.get(o.getOrderId())));
+
+       return result;
+    }
+
+    private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
+        List<OrderItemQueryDto> orderItems = em.createQuery(
+                "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                        " from OrderItem oi" +
+                        " join oi.item i" +
+                        " where oi.order.id in :orderIds", OrderItemQueryDto.class)
+                .setParameter("orderIds", orderIds)
+                .getResultList();
+        Map<Long, List<OrderItemQueryDto>> orderItemMap =
+                orderItems.stream().collect(Collectors.groupingBy(orderItemQueryDto -> orderItemQueryDto.getOrderId()));
+        return orderItemMap;
+    }
+
+    private List<Long> toOrderIds(List<OrderQueryDto> result) {
+        List<Long> orderIds = result.stream().map(o->o.getOrderId()).collect(Collectors.toList());
+        return orderIds;
+    }
+
     private List<OrderItemQueryDto> findOrderItems(Long orderId){
         // 일대다기 때문에 이쪽 쿼리 따로 짜주기
         return em.createQuery("select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
@@ -38,4 +73,5 @@ public class OrderQueryRepository {
                 " join o.delivery d", OrderQueryDto.class).getResultList();
 
     }
+
 }
