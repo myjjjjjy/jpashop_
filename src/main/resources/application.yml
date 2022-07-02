@@ -8,12 +8,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-      <!-- 조회하니까 테이블 수정 할 일이 없어서 일단 none 세팅 => 테이블 드랍하지 않음 -->
+      # 조회하니까 테이블 수정 할 일이 없어서 일단 none 세팅 => 테이블 드랍하지 않음
     properties:
       hibernate:
         # show_sql: true //system.out.print()로 출력
           format_sql:true
           default_batch_fetch_size: 100 # 데이터 다 로딩 되도록 세팅.
+      open-in-view: false # could not initialize proxy - no Session 로 오류남 ->
 
 logging:
   level:

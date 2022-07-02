@@ -9,6 +9,7 @@ import jpabook.jpashop.repository.OrderSearch;
 import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -52,16 +53,13 @@ public class OrderApiController {
 
     // dto변환 - fetch조인 최적화
     // 쿼리가 한 번만 나감. but, 페이징 불가. (꼭 기억하기!) 일대다를 페치조인 하는 순간 페이징 쿼리가 아예 안나감
+
+    private final OrderQueryService orderQueryService;
+
     @GetMapping("api/v3/orders")
-    public List<OrderDto> ordersV3() {
-        List<Order> orders = orderRepository.findAllWithItem();
+    public List<jpabook.jpashop.service.query.OrderDto> ordersV3() {
+        return orderQueryService.ordersV3();
 
-        for (Order order : orders) {
-            System.out.println("order ref = " + order + " id = " + order.getId());
-        }
-        List<OrderDto> result = orders.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
-
-        return result;
     }
 
     @GetMapping("api/v3.1/orders")
@@ -113,7 +111,7 @@ public class OrderApiController {
 
     // 원하는 데이터만 가져올 수 있는 방법
     @Getter
-    static class OrderItemDto {
+    public static class OrderItemDto {
         private String itemName;
         private int orderPrice;
         private int count;
